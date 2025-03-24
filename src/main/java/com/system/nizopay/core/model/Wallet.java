@@ -1,4 +1,4 @@
-package com.system.nizopay.domain;
+package com.system.nizopay.core.model;
 
 import lombok.Getter;
 
@@ -14,7 +14,7 @@ public class Wallet{
     private boolean isActive;
     private BigDecimal balance;
     private BigDecimal creditLimit;
-    private CreditStatus creditStatus;
+    private WalletStatus walletStatus;
     private List<Card> cards;
     private Date createdAt;
     private Date updatedAt;
@@ -28,7 +28,7 @@ public class Wallet{
         this.isActive = isActive;
         this.balance = BigDecimal.ZERO;
         this.creditLimit = BigDecimal.ZERO;
-        this.creditStatus = CreditStatus.NOT_REQUESTED;
+        this.walletStatus = WalletStatus.NOT_REQUESTED;
         this.cards = new ArrayList<Card>();
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -44,7 +44,7 @@ public class Wallet{
     }
 
     public void addCreditCard(CreditCard card) {
-        if(!this.creditStatus.equals(CreditStatus.APPROVED)){
+        if(!this.walletStatus.equals(WalletStatus.APPROVED)){
             throw new IllegalArgumentException("Credit must be approved before adding a new card.");
         }
         if (this.cards.contains(card)) {
@@ -68,14 +68,14 @@ public class Wallet{
     }
 
     public void requestCredit(){
-        if (this.creditStatus != CreditStatus.NOT_REQUESTED) {
+        if (this.walletStatus != WalletStatus.NOT_REQUESTED) {
             throw new IllegalArgumentException("Credit can only be approved when in PENDING status.");
         }
-        this.creditStatus = CreditStatus.PENDING;
+        this.walletStatus = WalletStatus.PENDING;
     }
 
     public void approveCredit(BigDecimal newLimit){
-        if (this.creditStatus != CreditStatus.PENDING) {
+        if (this.walletStatus != WalletStatus.PENDING) {
             throw new IllegalArgumentException("Credit can only be approved when in PENDING status.");
         }
         if(this.creditLimit.compareTo(BigDecimal.ZERO) < 0 ||
@@ -83,15 +83,23 @@ public class Wallet{
             throw new IllegalArgumentException("Credit limit must be a positive value.");
         }
         this.creditLimit = newLimit;
-        this.creditStatus = CreditStatus.APPROVED;
+        this.walletStatus = WalletStatus.APPROVED;
         this.updatedAt = new Date();
     }
 
     public void rejectCredit(){
-        if (this.creditStatus != CreditStatus.PENDING) {
+        if (this.walletStatus != WalletStatus.PENDING) {
             throw new IllegalArgumentException("Credit can only be rejected when in PENDING status.");
         }
-        this.creditStatus = CreditStatus.REJECTED;
+        this.walletStatus = WalletStatus.REJECTED;
+        this.updatedAt = new Date();
+    }
+
+    public void updateBalance(BigDecimal amount){
+        if(amount.compareTo(BigDecimal.ZERO) < 0){
+            throw new IllegalArgumentException("Amount must be a positive value.");
+        }
+        this.balance = this.balance.add(amount);
         this.updatedAt = new Date();
     }
 }

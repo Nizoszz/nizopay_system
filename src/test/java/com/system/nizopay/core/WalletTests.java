@@ -1,6 +1,8 @@
-package com.system.nizopay.domain;
+package com.system.nizopay.core;
 
-import com.system.nizopay.util.WalletCreator;
+import com.system.nizopay.core.model.Wallet;
+import com.system.nizopay.core.model.WalletStatus;
+import com.system.nizopay.util.WalletFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,31 +18,31 @@ public class WalletTests{
     private Wallet walletWithCard;
     @BeforeEach
     void setUp() {
-        wallet = WalletCreator.createValidWallet();
-        walletWithCard = WalletCreator.createValidWalletWithValidCard();
+        wallet = WalletFactory.createValidWallet();
+        walletWithCard = WalletFactory.createValidWalletWithValidCard();
     }
     @Test
     void shouldStartWithNoCreditRequested(){
-        assertThat(wallet.getCreditStatus()).isEqualTo(CreditStatus.NOT_REQUESTED);
+        assertThat(wallet.getWalletStatus()).isEqualTo(WalletStatus.NOT_REQUESTED);
         assertThat(wallet.getCreditLimit()).isZero();
     }
     @Test
     void shouldSetCreditToPendingWhenRequestingCredit(){
         wallet.requestCredit();
-        assertThat(wallet.getCreditStatus()).isEqualTo(CreditStatus.PENDING);
+        assertThat(wallet.getWalletStatus()).isEqualTo(WalletStatus.PENDING);
     }
     @Test
     void shouldApprovedCreditWhenInPendingStatus(){
         wallet.requestCredit();
         wallet.approveCredit(new BigDecimal("1600"));
-        assertThat(wallet.getCreditStatus()).isEqualTo(CreditStatus.APPROVED);
+        assertThat(wallet.getWalletStatus()).isEqualTo(WalletStatus.APPROVED);
         assertThat(wallet.getCreditLimit()).isEqualByComparingTo(new BigDecimal("1600"));
     }
     @Test
     void shouldRejectCreditWhenInPendingStatus(){
         wallet.requestCredit();
         wallet.rejectCredit();
-        assertThat(wallet.getCreditStatus()).isEqualTo(CreditStatus.REJECTED);
+        assertThat(wallet.getWalletStatus()).isEqualTo(WalletStatus.REJECTED);
     }
     @Test
     void shouldNotApprovedCreditIfNotPending(){

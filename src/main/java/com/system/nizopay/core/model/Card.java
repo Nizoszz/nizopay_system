@@ -1,4 +1,4 @@
-package com.system.nizopay.domain;
+package com.system.nizopay.core.model;
 
 import lombok.Getter;
 
@@ -6,6 +6,7 @@ import java.time.YearMonth;
 
 @Getter
 public abstract class Card{
+    private String cardId;
     private String userId;
     private String cardNumber;
     private String cardHolderName;
@@ -22,4 +23,5 @@ public abstract class Card{
         this.expirationDate = expirationDate;
         this.isCardActive = true;
     }
+
 }

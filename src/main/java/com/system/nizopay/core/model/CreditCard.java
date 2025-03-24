@@ -1,4 +1,4 @@
-package com.system.nizopay.domain;
+package com.system.nizopay.core.model;
 
 import lombok.Getter;
 
