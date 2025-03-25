@@ -3,10 +3,11 @@ package com.system.nizopay.core.model;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Getter
-public class Wallet{
+public class Account{
     private String accountId;
     private String accountNumber;
     private String agency;
@@ -14,13 +15,13 @@ public class Wallet{
     private boolean isActive;
     private BigDecimal balance;
     private BigDecimal creditLimit;
-    private WalletStatus walletStatus;
+    private AccountStatus accountStatus;
     private List<Card> cards;
-    private Date createdAt;
-    private Date updatedAt;
-    private Optional<Date> deletedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Optional<LocalDateTime> deletedAt;
 
-    public Wallet(String accountId,String accountNumber,String agency,String userId,boolean isActive,Date createdAt,Date updatedAt){
+    public Account(String accountId,String accountNumber,String agency,String userId,boolean isActive,LocalDateTime createdAt,LocalDateTime updatedAt){
         this.accountId = accountId;
         this.accountNumber = accountNumber;
         this.agency = agency;
@@ -28,7 +29,7 @@ public class Wallet{
         this.isActive = isActive;
         this.balance = BigDecimal.ZERO;
         this.creditLimit = BigDecimal.ZERO;
-        this.walletStatus = WalletStatus.NOT_REQUESTED;
+        this.accountStatus = AccountStatus.NOT_REQUESTED;
         this.cards = new ArrayList<Card>();
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -37,14 +38,14 @@ public class Wallet{
 
 
 
-    public static Wallet create(String accountNumber,String agency,String userId){
-        Date createdAt = new Date();
-        Date updatedAt = new Date();
-        return new Wallet(UUID.randomUUID().toString(),accountNumber,agency,userId, true, createdAt,updatedAt);
+    public static Account create(String accountNumber,String agency,String userId){
+        LocalDateTime createdAt = LocalDateTime.now();
+        LocalDateTime updatedAt = LocalDateTime.now();
+        return new Account(UUID.randomUUID().toString(),accountNumber,agency,userId,true,createdAt,updatedAt);
     }
 
     public void addCreditCard(CreditCard card) {
-        if(!this.walletStatus.equals(WalletStatus.APPROVED)){
+        if(!this.accountStatus.equals(AccountStatus.APPROVED)){
             throw new IllegalArgumentException("Credit must be approved before adding a new card.");
         }
         if (this.cards.contains(card)) {
@@ -55,7 +56,7 @@ public class Wallet{
         }
 
         this.cards.add(card);
-        this.updatedAt = new Date();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void removeCard(Card card) {
@@ -64,18 +65,18 @@ public class Wallet{
         }
 
         this.cards.remove(card);
-        this.updatedAt = new Date();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void requestCredit(){
-        if (this.walletStatus != WalletStatus.NOT_REQUESTED) {
+        if (this.accountStatus != AccountStatus.NOT_REQUESTED) {
             throw new IllegalArgumentException("Credit can only be approved when in PENDING status.");
         }
-        this.walletStatus = WalletStatus.PENDING;
+        this.accountStatus = AccountStatus.PENDING;
     }
 
     public void approveCredit(BigDecimal newLimit){
-        if (this.walletStatus != WalletStatus.PENDING) {
+        if (this.accountStatus != AccountStatus.PENDING) {
             throw new IllegalArgumentException("Credit can only be approved when in PENDING status.");
         }
         if(this.creditLimit.compareTo(BigDecimal.ZERO) < 0 ||
@@ -83,16 +84,16 @@ public class Wallet{
             throw new IllegalArgumentException("Credit limit must be a positive value.");
         }
         this.creditLimit = newLimit;
-        this.walletStatus = WalletStatus.APPROVED;
-        this.updatedAt = new Date();
+        this.accountStatus = AccountStatus.APPROVED;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void rejectCredit(){
-        if (this.walletStatus != WalletStatus.PENDING) {
+        if (this.accountStatus != AccountStatus.PENDING) {
             throw new IllegalArgumentException("Credit can only be rejected when in PENDING status.");
         }
-        this.walletStatus = WalletStatus.REJECTED;
-        this.updatedAt = new Date();
+        this.accountStatus = AccountStatus.REJECTED;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void updateBalance(BigDecimal amount){
@@ -100,6 +101,6 @@ public class Wallet{
             throw new IllegalArgumentException("Amount must be a positive value.");
         }
         this.balance = this.balance.add(amount);
-        this.updatedAt = new Date();
+        this.updatedAt = LocalDateTime.now();
     }
 }

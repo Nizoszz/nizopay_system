@@ -1,7 +1,6 @@
 package com.system.nizopay.persistence.orm.entity;
 
-import com.system.nizopay.core.model.Card;
-import com.system.nizopay.core.model.WalletStatus;
+import com.system.nizopay.core.model.AccountStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,11 +16,10 @@ import java.util.Optional;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class WalletEntity{
+public class AccountEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "wallet_id")
-    private String walletId;
+    @Column(name = "account_id")
+    private String accountId;
     @Column(name = "account_number")
     private String accountNumber;
     private String agency;
@@ -32,11 +30,11 @@ public class WalletEntity{
     private BigDecimal balance;
     @Column(name = "credit_limit")
     private BigDecimal creditLimit;
-    @Column(name = "wallet_status")
-    private WalletStatus walletStatus;
-    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL)
+    @Column(name = "account_status")
+    private AccountStatus accountStatus;
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<TransactionEntity> transactions;
-    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<CardEntity> cards;
     private Date createdAt;
     private Date updatedAt;

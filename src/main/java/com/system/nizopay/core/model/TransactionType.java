@@ -1,6 +1,9 @@
 package com.system.nizopay.core.model;
 
 public enum TransactionType{
-    IN,
-    OUT
+    DEPOSIT,
+    RECEIVED_TRANSFER,
+    WITHDRAW,
+    SENT_TRANSFER,
+    PAYMENT
 }

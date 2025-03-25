@@ -2,6 +2,7 @@ package com.system.nizopay.core.model;
 
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -15,9 +16,9 @@ public class Transaction{
     private TransactionStatus transactionStatus;
     private TransactionType transactionType;
     private Optional<String> description;
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-    public Transaction(String transactionId,String payerId,String payeeId,double amount,TransactionStatus transactionStatus,TransactionType transactionType,Optional<String> description,Date createdAt){
+    public Transaction(String transactionId,String payerId,String payeeId,double amount,TransactionStatus transactionStatus,TransactionType transactionType,Optional<String> description,LocalDateTime createdAt){
         this.transactionId = transactionId;
         this.payerId = payerId;
         this.payeeId = payeeId;
@@ -29,9 +30,9 @@ public class Transaction{
     }
 
     public static Transaction create(String payerId,String payeeId,double amount,TransactionType transactionType,Optional<String> description){
-        Date createdAt = new Date();
+        LocalDateTime createdAt = LocalDateTime.now();
         String id = UUID.randomUUID().toString();
-        return new Transaction(id, payerId, payeeId,amount,TransactionStatus.PENDING,TransactionType.valueOf(transactionType),description,createdAt);
+        return new Transaction(id, payerId, payeeId,amount,TransactionStatus.PENDING,transactionType,description,createdAt);
     }
 
     public void failedTransaction(){

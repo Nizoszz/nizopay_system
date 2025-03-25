@@ -6,10 +6,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
-public class CreditCardFactory{
-    public static CreditCard createValidCreditCardNumberWithoutBalanceAndUserId(BigDecimal balance, String userId) {
-        return new CreditCard(userId,"4532 1111 2222 3333","User Test",
-                                             YearMonth.from(LocalDate.of(2026,
-                                                                         3,11)),new BigDecimal("200"), balance);
+public class CreditCardFactory {
+    public static CreditCard createValidCreditCardNumberWithoutBalanceAndUserId(BigDecimal userId,String creditLimit,BigDecimal currentBalance) {
+        return CreditCard.create(userId, "4532111122223333", "User Test","000",
+                                 YearMonth.from(LocalDate.of(2026, 3, 11)),
+                                 creditLimit, currentBalance);
     }
 }
+

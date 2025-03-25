@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -20,7 +21,6 @@ import java.util.Optional;
 @Getter
 public class TransactionEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transaction_id")
     private String transactionId;
     @Column(name = "payer_id")
@@ -36,7 +36,7 @@ public class TransactionEntity{
     @Column(name = "description", nullable = true)
     private Optional<String> description;
     @Column(name = "created_at")
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     public static TransactionEntity toEntity(Transaction data){
         return new TransactionEntity(data.getTransactionId(),
