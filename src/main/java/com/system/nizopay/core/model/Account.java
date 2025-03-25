@@ -1,5 +1,7 @@
 package com.system.nizopay.core.model;
 
+import com.system.nizopay.persistence.orm.entity.CardEntity;
+import com.system.nizopay.persistence.orm.entity.TransactionEntity;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -17,9 +19,10 @@ public class Account{
     private BigDecimal creditLimit;
     private AccountStatus accountStatus;
     private List<Card> cards;
+    private List<Transaction> transactions;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Optional<LocalDateTime> deletedAt;
+    private LocalDateTime deletedAt;
 
     public Account(String accountId,String accountNumber,String agency,String userId,boolean isActive,LocalDateTime createdAt,LocalDateTime updatedAt){
         this.accountId = accountId;
@@ -31,17 +34,36 @@ public class Account{
         this.creditLimit = BigDecimal.ZERO;
         this.accountStatus = AccountStatus.NOT_REQUESTED;
         this.cards = new ArrayList<Card>();
+        this.transactions = new ArrayList<Transaction>();
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.deletedAt = Optional.empty();
+        this.deletedAt = null;
     }
 
-
+    public Account(String accountId,String accountNumber,String agency,String userId,boolean isActive,BigDecimal balance,BigDecimal creditLimit,AccountStatus accountStatus,List<Card> cards,List<Transaction> transactions,LocalDateTime createdAt,LocalDateTime updatedAt,LocalDateTime deletedAt){
+        this.accountId = accountId;
+        this.accountNumber = accountNumber;
+        this.agency = agency;
+        this.userId = userId;
+        this.isActive = isActive;
+        this.balance = balance;
+        this.creditLimit = creditLimit;
+        this.accountStatus = accountStatus;
+        this.cards = cards;
+        this.transactions = transactions;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+    }
 
     public static Account create(String accountNumber,String agency,String userId){
         LocalDateTime createdAt = LocalDateTime.now();
         LocalDateTime updatedAt = LocalDateTime.now();
         return new Account(UUID.randomUUID().toString(),accountNumber,agency,userId,true,createdAt,updatedAt);
+    }
+    public static Account restore(String accountId,String accountNumber,String agency,String userId,boolean active,BigDecimal balance,BigDecimal creditLimit,AccountStatus accountStatus,List<Transaction> transactions,List<Card> cards,LocalDateTime createdAt,LocalDateTime updatedAt,LocalDateTime deletedAt){
+        return new Account(accountId,accountNumber,agency,userId,active,balance,creditLimit,accountStatus,cards,
+                           transactions,createdAt,updatedAt,deletedAt);
     }
 
     public void addCreditCard(CreditCard card) {
@@ -96,11 +118,14 @@ public class Account{
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void updateBalance(BigDecimal amount){
+    public void withdraw(BigDecimal amount){
         if(amount.compareTo(BigDecimal.ZERO) < 0){
             throw new IllegalArgumentException("Amount must be a positive value.");
         }
-        this.balance = this.balance.add(amount);
+        if(this.balance.compareTo(amount) < 0){
+            throw new IllegalArgumentException("Insufficient balance.");
+        }
+        this.balance = this.balance.subtract(amount);
         this.updatedAt = LocalDateTime.now();
     }
 }

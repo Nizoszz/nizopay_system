@@ -7,11 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Optional;
 
 
 @Entity
@@ -34,7 +30,7 @@ public class TransactionEntity{
     @Column(name = "transaction_type")
     private TransactionType transactionType;
     @Column(name = "description", nullable = true)
-    private Optional<String> description;
+    private String description;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

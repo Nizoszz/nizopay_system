@@ -19,12 +19,10 @@ public class CardEntity{
     @Id
     @Column(name = "card_id")
     private String cardId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private AccountEntity account;
+    @Column(name = "user_id")
+    private String userId;
+    @Column(name = "account_id")
+    private String accountId;
     @Column(name = "card_number")
     private String cardNumber;
     @Column(name = "card_holder_name")
@@ -37,15 +35,4 @@ public class CardEntity{
     @Enumerated(EnumType.STRING)
     @Column(name = "cart_type")
     private CardType cardType;
-
-
-    public static CardEntity toEntity(Card card, UserEntity user, AccountEntity account){
-        return new CardEntity(card.getCardId(), user, account, card.getCardNumber(), card.getCardHolderName(), card.getCvv(), card.getExpirationDate(),
-                              card.isCardActive(), card.getCardType());
-    }
-
-    public static Card toModel(CardEntity cardEntity){
-        return new Card(cardEntity.getCardId(), cardEntity.getUser().getUserId(), cardEntity.getAccount().getAccountId(), cardEntity.getCardNumber(), cardEntity.getCardHolderName(),
-                              cardEntity.getCvv(), cardEntity.getExpirationDate(), cardEntity.isCardActive(), cardEntity.getCardType());
-    }
 }

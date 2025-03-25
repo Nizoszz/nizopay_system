@@ -1,7 +1,5 @@
-package com.system.nizopay.core;
+package com.system.nizopay.core.model;
 
-import com.system.nizopay.core.model.Account;
-import com.system.nizopay.core.model.AccountStatus;
 import com.system.nizopay.util.AccountFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.system.nizopay.service;
+package com.system.nizopay.core.service;
 
 import com.system.nizopay.core.model.Transaction;
 import com.system.nizopay.core.model.TransactionType;
@@ -8,6 +8,7 @@ import com.system.nizopay.core.service.TransactionService;
 import com.system.nizopay.persistence.orm.entity.TransactionEntity;
 import com.system.nizopay.util.AccountFactory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -30,7 +31,12 @@ public class TransactionServiceTests{
         accountUser1 = AccountFactory.createAccountWithBalancePositive("123456","user1");
         accountUser2 = AccountFactory.createAccountWithBalancePositive("654321","user2");
         transaction = Transaction.create(accountUser1.getUserId(),accountUser2.getUserId(),300.00,
-                                         TransactionType.PAYMENT,java.util.Optional.empty());
+                                         TransactionType.PAYMENT,null);
         BDDMockito.when(this.transactionRepository.save(ArgumentMatchers.any(TransactionEntity.class))).thenReturn(TransactionEntity.toEntity(transaction));
+    }
+    @Test
+    void shouldSaveTransaction() {
+        var output = transactionService.save(transaction);
+
     }
 }
