@@ -1,6 +1,5 @@
 package com.system.nizopay.persistence.orm.entity;
 
-import com.system.nizopay.core.model.Transaction;
 import com.system.nizopay.core.model.TransactionStatus;
 import com.system.nizopay.core.model.TransactionType;
 import jakarta.persistence.*;
@@ -19,42 +18,20 @@ public class TransactionEntity{
     @Id
     @Column(name = "transaction_id")
     private String transactionId;
-    @Column(name = "payer_id")
+    @Column(name = "payer_id", nullable = true)
     private String payerId;
-    @Column(name = "payee_id")
+    @Column(name = "payee_id", nullable = true)
     private String payeeId;
     @Column(name = "amount")
     private Double amount;
     @Column(name = "transaction_status")
+    @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;
     @Column(name = "transaction_type")
+    @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
     @Column(name = "description", nullable = true)
     private String description;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    public static TransactionEntity toEntity(Transaction data){
-        return new TransactionEntity(data.getTransactionId(),
-                                     data.getPayerId(),
-                                     data.getPayeeId(),
-                                     data.getAmount(),
-                                     data.getTransactionStatus(),
-                                     data.getTransactionType(),
-                                     data.getDescription(),
-                                     data.getCreatedAt());
-    }
-
-    public static Transaction toModel(TransactionEntity data){
-        return new Transaction(
-                data.getTransactionId(),
-                data.getPayerId(),
-                data.getPayeeId(),
-                data.getAmount(),
-                data.getTransactionStatus(),
-                data.getTransactionType(),
-                data.getDescription(),
-                data.getCreatedAt()
-        );
-    }
 }

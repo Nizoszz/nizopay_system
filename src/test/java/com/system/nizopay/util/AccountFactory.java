@@ -18,7 +18,7 @@ public class AccountFactory{
     }
     public static Account createAccountWithBalancePositive(String accountNumber,String userId){
         var account = Account.create(accountNumber,"001",userId);
-        account.updateBalance(new BigDecimal("3000"));
+        account.deposit(new BigDecimal("3000"));
         return account;
     }
 }

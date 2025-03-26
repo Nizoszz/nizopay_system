@@ -1,7 +1,6 @@
 package com.system.nizopay.core.model;
 
-import com.system.nizopay.persistence.orm.entity.CardEntity;
-import com.system.nizopay.persistence.orm.entity.TransactionEntity;
+import com.system.nizopay.core.exception.ConflictException;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -68,13 +67,13 @@ public class Account{
 
     public void addCreditCard(CreditCard card) {
         if(!this.accountStatus.equals(AccountStatus.APPROVED)){
-            throw new IllegalArgumentException("Credit must be approved before adding a new card.");
+            throw new ConflictException("Credit must be approved before adding a new card.");
         }
         if (this.cards.contains(card)) {
-            throw new IllegalArgumentException("Card is already associated with this wallet.");
+            throw new ConflictException("Card is already associated with this wallet.");
         }
         if (!this.userId.equals(card.getUserId())) {
-            throw new IllegalArgumentException("Card belongs to a different user.");
+            throw new ConflictException("Card belongs to a different user.");
         }
 
         this.cards.add(card);
@@ -83,7 +82,7 @@ public class Account{
 
     public void removeCard(Card card) {
         if (!this.cards.contains(card)) {
-            throw new IllegalArgumentException("Card is not associated with this wallet.");
+            throw new ConflictException("Card is not associated with this account.");
         }
 
         this.cards.remove(card);
@@ -92,18 +91,18 @@ public class Account{
 
     public void requestCredit(){
         if (this.accountStatus != AccountStatus.NOT_REQUESTED) {
-            throw new IllegalArgumentException("Credit can only be approved when in PENDING status.");
+            throw new ConflictException("Credit can only be approved when in PENDING status.");
         }
         this.accountStatus = AccountStatus.PENDING;
     }
 
     public void approveCredit(BigDecimal newLimit){
         if (this.accountStatus != AccountStatus.PENDING) {
-            throw new IllegalArgumentException("Credit can only be approved when in PENDING status.");
+            throw new ConflictException("Credit can only be approved when in PENDING status.");
         }
         if(this.creditLimit.compareTo(BigDecimal.ZERO) < 0 ||
                 newLimit.compareTo(BigDecimal.ZERO) < 0){
-            throw new IllegalArgumentException("Credit limit must be a positive value.");
+            throw new ConflictException("Credit limit must be a positive value.");
         }
         this.creditLimit = newLimit;
         this.accountStatus = AccountStatus.APPROVED;
@@ -112,7 +111,7 @@ public class Account{
 
     public void rejectCredit(){
         if (this.accountStatus != AccountStatus.PENDING) {
-            throw new IllegalArgumentException("Credit can only be rejected when in PENDING status.");
+            throw new ConflictException("Credit can only be rejected when in PENDING status.");
         }
         this.accountStatus = AccountStatus.REJECTED;
         this.updatedAt = LocalDateTime.now();
@@ -120,12 +119,19 @@ public class Account{
 
     public void withdraw(BigDecimal amount){
         if(amount.compareTo(BigDecimal.ZERO) < 0){
-            throw new IllegalArgumentException("Amount must be a positive value.");
+            throw new ConflictException("Amount must be a positive value.");
         }
         if(this.balance.compareTo(amount) < 0){
-            throw new IllegalArgumentException("Insufficient balance.");
+            throw new ConflictException("Insufficient balance.");
         }
         this.balance = this.balance.subtract(amount);
+        this.updatedAt = LocalDateTime.now();
+    }
+    public void deposit(BigDecimal amount){
+        if(amount.compareTo(BigDecimal.ZERO) < 0){
+            throw new ConflictException("Amount must be a positive value.");
+        }
+        this.balance = this.balance.add(amount);
         this.updatedAt = LocalDateTime.now();
     }
 }

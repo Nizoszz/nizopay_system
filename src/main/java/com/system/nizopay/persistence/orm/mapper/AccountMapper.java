@@ -22,7 +22,7 @@ public class AccountMapper{
                 account.getCreditLimit(),
                 account.getAccountStatus(),
                 account.getTransactions() != null
-                        ? account.getTransactions().stream().map(TransactionEntity::toEntity).collect(Collectors.toList())
+                        ? account.getTransactions().stream().map(TransactionMapper::toEntity).collect(Collectors.toList())
                         : List.of(),
                 account.getCards() != null
                         ? account.getCards().stream().map(CardMapper::toEntity).collect(Collectors.toList())

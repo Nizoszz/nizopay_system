@@ -17,6 +17,7 @@ public class Transaction{
     private String description;
     private LocalDateTime createdAt;
 
+
     public Transaction(String transactionId,String payerId,String payeeId,double amount,TransactionStatus transactionStatus,TransactionType transactionType,String description,LocalDateTime createdAt){
         this.transactionId = transactionId;
         this.payerId = payerId;
@@ -28,10 +29,10 @@ public class Transaction{
         this.createdAt = createdAt;
     }
 
-    public static Transaction create(String payerId,String payeeId,double amount,TransactionType transactionType,Optional<String> description){
+    public static Transaction create(String payerId,String payeeId,double amount,TransactionType transactionType,String description){
         LocalDateTime createdAt = LocalDateTime.now();
         String id = UUID.randomUUID().toString();
-        return new Transaction(id, payerId, payeeId,amount,TransactionStatus.PENDING,transactionType,description.orElse(null),createdAt);
+        return new Transaction(id, payerId, payeeId,amount,TransactionStatus.PENDING,transactionType,description != null ?description: "",createdAt);
     }
 
     public void failedTransaction(){
@@ -39,5 +40,8 @@ public class Transaction{
     }
     public void successfulTransaction(){
         this.transactionStatus = TransactionStatus.SUCCESSFUL;
+    }
+    public void refundTransaction(){
+        this.transactionStatus = TransactionStatus.REFUNDED;
     }
 }
