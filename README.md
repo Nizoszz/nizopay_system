@@ -1,96 +1,90 @@
 💳 NizoPay System
-NizoPay é um sistema de gestão de contas digitais que simula uma carteira virtual com funcionalidades de criação de usuários, contas bancárias, cartões e transações. Ideal para fins educacionais, prototipagem de fintechs ou estudos de arquitetura de software com regras de negócio bem definidas.
+NizoPay é um sistema de gestão de contas digitais que simula uma carteira virtual. Com ele, é possível criar usuários, contas bancárias, cartões e realizar transações financeiras. Ideal para fins educacionais, prototipagem de fintechs ou estudos de arquitetura de software com regras de negócio bem definidas.
 
-🔗 Acesse a documentação da API:
-https://nizopay-system.onrender.com/swagger-ui/index.html#/
+🔗 Documentação da API
+Acesse a documentação completa:
+👉 Swagger UI
 
 📌 Funcionalidades
 Cadastro e gerenciamento de usuários;
 
-Criação automática de contas bancárias com número e agência;
+Criação automática de contas com número e agência;
 
-Solicitação, aprovação e rejeição de crédito;
+Solicitação, aprovação ou rejeição de crédito;
 
-Emissão de cartões de crédito e geração de números válidos;
+Emissão de cartões com geração automática de número válido;
 
-Depósitos, saques e transferências entre contas;
+Operações financeiras: depósitos, saques e transferências;
 
-Controle de status, limite e saldo de crédito;
+Controle de status, saldo e limite de crédito;
 
-Validação de cartões com base em data de expiração e status.
+Validação de cartões por data de expiração e status de ativação.
 
-🧱 Estrutura do Banco de Dados
+🧱 Modelo de Dados
 Tabelas principais:
-tb_users
-Armazena dados dos usuários.
-
+tb_users — Usuários
 Coluna	Tipo	Descrição
 user_id	UUID	Identificador único
 full_name	VARCHAR(255)	Nome completo
-email	VARCHAR(255)	E-mail único
+email	VARCHAR(255)	E-mail (único)
+updated_at	TIMESTAMP	Última atualização
+deleted_at	TIMESTAMP	Deleção lógica
+tb_accounts — Contas Bancárias
+Coluna	Tipo	Descrição
+account_id	UUID	Identificador da conta
+account_number	VARCHAR(8)	Número da conta
+user_id	UUID	ID do usuário (FK)
+is_active	BOOLEAN	Conta ativa
+balance	DECIMAL(15,2)	Saldo disponível
+credit_limit	DECIMAL(15,2)	Limite de crédito
+account_status	VARCHAR(50)	Status da conta (ex: ACTIVE)
 created_at	TIMESTAMP	Data de criação
 updated_at	TIMESTAMP	Última atualização
 deleted_at	TIMESTAMP	Deleção lógica
-tb_accounts
-Armazena dados das contas bancárias.
-
-Coluna	Tipo	Descrição
-account_id	UUID	Identificador único
-account_number	VARCHAR(8)	Número da conta
-agency	VARCHAR(4)	Número da agência
-user_id	UUID	Dono da conta (chave estrangeira)
-balance	DECIMAL(15,2)	Saldo disponível
-credit_limit	DECIMAL(15,2)	Limite de crédito
-account_status	VARCHAR(50)	Status da conta
-tb_cards
-Armazena dados dos cartões associados às contas.
-
+tb_cards — Cartões
 Coluna	Tipo	Descrição
 card_id	UUID	Identificador do cartão
-card_number	VARCHAR(8)	Número do cartão (gerado)
-card_holder_name	VARCHAR(255)	Nome impresso no cartão
-cvv	VARCHAR(3)	Código de verificação
+user_id	UUID	Dono do cartão (FK)
+account_id	UUID	Conta associada (FK)
+card_number	VARCHAR	Número do cartão
+card_holder_name	VARCHAR(255)	Nome impresso
+cvv	VARCHAR(3)	Código de segurança
 expiration_date	DATE	Data de expiração
-is_card_active	BOOLEAN	Status do cartão
-card_type	VARCHAR(50)	Tipo do cartão (CREDIT)
-credit_limit	DECIMAL	Limite (caso crédito)
+is_card_active	BOOLEAN	Status de ativação
+card_type	VARCHAR(50)	Tipo (ex: CREDIT)
+credit_limit	DECIMAL	Limite do cartão (caso crédito)
 current_balance	DECIMAL	Saldo atual (caso crédito)
-tb_transactions
-Registra as movimentações financeiras entre contas.
-
+tb_transactions — Transações
 Coluna	Tipo	Descrição
-transaction_id	UUID	ID da transação
+transaction_id	UUID	Identificador da transação
 payer_id	UUID	Conta pagadora (nullable)
 payee_id	UUID	Conta recebedora (nullable)
 amount	DECIMAL	Valor transacionado
-transaction_status	VARCHAR(50)	Status da transação
-transaction_type	VARCHAR(50)	Tipo: DEPÓSITO, SAQUE, etc.
+transaction_status	VARCHAR(50)	Status (ex: COMPLETED, FAILED)
+transaction_type	VARCHAR(50)	Tipo (ex: DEPOSIT, WITHDRAW, TRANSFER)
 description	TEXT	Descrição opcional
-created_at	TIMESTAMP	Data e hora
+created_at	TIMESTAMP	Data/hora da transação
 ⚙️ Regras de Negócio
-Uma conta pode:
+Contas:
+Podem solicitar crédito (status PENDING);
 
-Solicitar crédito (status muda para PENDING);
+Podem ser aprovadas (APPROVED) ou rejeitadas (REJECTED);
 
-Ser aprovada (APPROVED) ou rejeitada (REJECTED);
+Podem ter múltiplos cartões vinculados;
 
-Ter múltiplos cartões (com validações de limite e titularidade);
+Realizam depósitos, saques e transferências com validações de saldo.
 
-Realizar depósitos e saques com verificação de saldo;
-
-Cartões de crédito:
-
+Cartões:
 Podem ser ativados/desativados;
 
-Devem ser válidos (data futura e ativos);
+Devem estar válidos (ativos e com data de expiração futura);
 
-Possuem limite e saldo independentes da conta;
+Possuem saldo e limite de crédito independente da conta.
 
 Transações:
+Apenas permitidas se houver saldo suficiente (ou crédito disponível);
 
-Só são permitidas se o saldo for suficiente;
-
-São registradas com status e tipo (ex: TRANSFER, WITHDRAW);
+Registradas com status (PENDING, COMPLETED, etc.) e tipo (DEPOSIT, TRANSFER, etc.).
 
 🛠️ Tecnologias Utilizadas
 Java 17+
@@ -99,15 +93,15 @@ Spring Boot
 
 Lombok
 
-Swagger UI (documentação da API)
+Swagger UI (documentação interativa)
 
-Banco de dados relacional (PostgreSQL ou H2 para testes)
+Banco de Dados: PostgreSQL (produção) / H2 (testes)
 
-UUID para identificação única
+Identificação via UUID
 
-Arquitetura baseada em domínio (DDD)
+Arquitetura em camadas com DDD (Domain-Driven Design)
 
-🚀 Como executar o projeto
+🚀 Como Executar o Projeto
 Clone o repositório:
 
 bash
@@ -115,7 +109,8 @@ Copy
 Edit
 git clone https://github.com/seu-usuario/nizopay-system.git
 cd nizopay-system
-Configure o banco de dados no arquivo application.properties (ou use H2 em memória).
+Configure o banco de dados
+Ajuste o application.properties com as credenciais do seu banco (ou utilize H2 em memória).
 
 Execute a aplicação:
 
@@ -123,7 +118,7 @@ bash
 Copy
 Edit
 ./mvnw spring-boot:run
-Acesse a API:
+Acesse a API localmente:
 
 bash
 Copy
