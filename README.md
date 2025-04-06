@@ -21,69 +21,62 @@ Acesse a documentação completa:\
 
 ---
 
-## 🧱️ Modelo de Dados
+## 📊 DER - Diagrama Entidade Relacionamento
 
-### **Tabelas principais:**
+```mermaid
+erDiagram
+    tb_users ||--o{ tb_accounts : possui
+    tb_users ||--o{ tb_cards : possui
+    tb_accounts ||--o{ tb_cards : emite
+    tb_accounts ||--o{ tb_transactions : origina
+    tb_accounts ||--o{ tb_transactions : recebe
 
-#### `tb_users` — Usuários
+    tb_users {
+        UUID user_id PK
+        VARCHAR full_name
+        VARCHAR email
+        TIMESTAMP updated_at
+        TIMESTAMP deleted_at
+    }
 
-| Coluna      | Tipo         | Descrição           |
-| ----------- | ------------ | ------------------- |
-| user\_id    | UUID         | Identificador único |
-| full\_name  | VARCHAR(255) | Nome completo       |
-| email       | VARCHAR(255) | E-mail (único)      |
-| updated\_at | TIMESTAMP    | Última atualização  |
-| deleted\_at | TIMESTAMP    | Deleção lógica      |
+    tb_accounts {
+        UUID account_id PK
+        VARCHAR account_number
+        UUID user_id FK
+        BOOLEAN is_active
+        DECIMAL balance
+        DECIMAL credit_limit
+        VARCHAR account_status
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+        TIMESTAMP deleted_at
+    }
 
----
+    tb_cards {
+        UUID card_id PK
+        UUID user_id FK
+        UUID account_id FK
+        VARCHAR card_number
+        VARCHAR card_holder_name
+        VARCHAR cvv
+        DATE expiration_date
+        BOOLEAN is_card_active
+        VARCHAR card_type
+        DECIMAL credit_limit
+        DECIMAL current_balance
+    }
 
-#### `tb_accounts` — Contas Bancárias
-
-| Coluna          | Tipo          | Descrição                    |
-| --------------- | ------------- | ---------------------------- |
-| account\_id     | UUID          | Identificador da conta       |
-| account\_number | VARCHAR(8)    | Número da conta              |
-| user\_id        | UUID          | ID do usuário (FK)           |
-| is\_active      | BOOLEAN       | Conta ativa                  |
-| balance         | DECIMAL(15,2) | Saldo disponível             |
-| credit\_limit   | DECIMAL(15,2) | Limite de crédito            |
-| account\_status | VARCHAR(50)   | Status da conta (ex: ACTIVE) |
-| created\_at     | TIMESTAMP     | Data de criação              |
-| updated\_at     | TIMESTAMP     | Última atualização           |
-| deleted\_at     | TIMESTAMP     | Deleção lógica               |
-
----
-
-#### `tb_cards` — Cartões
-
-| Coluna             | Tipo         | Descrição                       |
-| ------------------ | ------------ | ------------------------------- |
-| card\_id           | UUID         | Identificador do cartão         |
-| user\_id           | UUID         | Dono do cartão (FK)             |
-| account\_id        | UUID         | Conta associada (FK)            |
-| card\_number       | VARCHAR      | Número do cartão                |
-| card\_holder\_name | VARCHAR(255) | Nome impresso                   |
-| cvv                | VARCHAR(3)   | Código de segurança             |
-| expiration\_date   | DATE         | Data de expiração               |
-| is\_card\_active   | BOOLEAN      | Status de ativação              |
-| card\_type         | VARCHAR(50)  | Tipo (ex: CREDIT)               |
-| credit\_limit      | DECIMAL      | Limite do cartão (caso crédito) |
-| current\_balance   | DECIMAL      | Saldo atual (caso crédito)      |
-
----
-
-#### `tb_transactions` — Transações
-
-| Coluna              | Tipo        | Descrição                              |
-| ------------------- | ----------- | -------------------------------------- |
-| transaction\_id     | UUID        | Identificador da transação             |
-| payer\_id           | UUID        | Conta pagadora (nullable)              |
-| payee\_id           | UUID        | Conta recebedora (nullable)            |
-| amount              | DECIMAL     | Valor transacionado                    |
-| transaction\_status | VARCHAR(50) | Status (ex: COMPLETED, FAILED)         |
-| transaction\_type   | VARCHAR(50) | Tipo (ex: DEPOSIT, WITHDRAW, TRANSFER) |
-| description         | TEXT        | Descrição opcional                     |
-| created\_at         | TIMESTAMP   | Data/hora da transação                 |
+    tb_transactions {
+        UUID transaction_id PK
+        UUID payer_id FK
+        UUID payee_id FK
+        DECIMAL amount
+        VARCHAR transaction_status
+        VARCHAR transaction_type
+        TEXT description
+        TIMESTAMP created_at
+    }
+```
 
 ---
 
@@ -143,4 +136,3 @@ cd nizopay-system
 ```
 http://localhost:8080/swagger-ui/index.html
 ```
-
