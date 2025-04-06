@@ -2,6 +2,8 @@ package com.system.nizopay.core.model;
 
 import lombok.Getter;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 
 @Getter
@@ -12,11 +14,11 @@ public class Card{
     private String cardNumber;
     private String cardHolderName;
     private String cvv;
-    private YearMonth expirationDate;
+    private LocalDate expirationDate;
     private boolean isCardActive;
     private CardType cardType;
 
-    public Card(String cardId,String userId,String accountId,String cardNumber,String cardHolderName,String cvv,YearMonth expirationDate,boolean isCardActive,CardType cardType){
+    public Card(String cardId,String userId,String accountId,String cardNumber,String cardHolderName,String cvv,LocalDate expirationDate,boolean isCardActive,CardType cardType){
         this.cardId = cardId;
         this.userId = userId;
         this.accountId = accountId;
@@ -30,7 +32,7 @@ public class Card{
 
     public boolean isValid() {
         return isCardActive &&
-                expirationDate.isAfter(YearMonth.now());
+                YearMonth.from(expirationDate).isAfter(YearMonth.now());
     }
     public void block() {
         this.isCardActive = false;

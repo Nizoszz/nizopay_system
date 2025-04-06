@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 import java.time.YearMonth;
 
 @Entity
@@ -31,7 +33,7 @@ public class CardEntity {
     private String cvv;
 
     @Column(name = "expiration_date")
-    private YearMonth expirationDate;
+    private LocalDate expirationDate;
 
     @Column(name = "is_card_active")
     private boolean isCardActive;
