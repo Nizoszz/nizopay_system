@@ -32,11 +32,10 @@ CREATE TABLE tb_cards (
     is_card_active BOOLEAN DEFAULT TRUE NOT NULL,
     cart_type VARCHAR(50) NOT NULL,
     credit_limit DECIMAL(15,2) DEFAULT NULL,
-    current_balance DECIMAL(15,2) DEFAULT NULL
+    current_balance DECIMAL(15,2) DEFAULT NULL,
     CONSTRAINT fk_card_user FOREIGN KEY (user_id) REFERENCES tb_users(user_id) ON DELETE CASCADE,
     CONSTRAINT fk_card_account FOREIGN KEY (account_id) REFERENCES tb_accounts(account_id) ON DELETE CASCADE
 );
-
 CREATE TABLE tb_transactions (
     transaction_id UUID PRIMARY KEY,
     payer_id UUID NULL,
