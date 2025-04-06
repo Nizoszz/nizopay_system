@@ -8,56 +8,63 @@
 //import org.springframework.http.ResponseEntity;
 //import org.springframework.web.bind.annotation.ControllerAdvice;
 //import org.springframework.web.bind.annotation.ExceptionHandler;
-//
+//import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 //import java.time.LocalDateTime;
-//import java.util.HashMap;
-//import java.util.Map;
 //
 //@ControllerAdvice
-//public class RestHandleException {
-//
-//    @ExceptionHandler(NotFoundException.class)
-//    public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
-//        return buildResponse(HttpStatus.NOT_FOUND,ex.getMessage());
+//public class RestHandleException extends ResponseEntityExceptionHandler{
+//    @ExceptionHandler(ConflictException.class)
+//    public ResponseEntity<ConflictExceptionDetails> handleConflicException(ConflictException ex) {
+//        return new ResponseEntity<>(ConflictExceptionDetails.builder()
+//                                            .timestamp(LocalDateTime.now())
+//                                            .error("Bad request exception")
+//                                            .status(HttpStatus.BAD_REQUEST.value())
+//                                            .details(ex.getMessage())
+//                                            .build(),
+//                                    HttpStatus.BAD_REQUEST);
 //    }
 //
-//    @ExceptionHandler(ConflictException.class)
-//    public ResponseEntity<Object> handleConflictException(ConflictException ex) {
-//        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+//    @ExceptionHandler(NotFoundException.class)
+//    public ResponseEntity<NotFoundExceptionDetails> handleNotFoundException(NotFoundException ex) {
+//        return new ResponseEntity<>(
+//                NotFoundExceptionDetails.builder()
+//                        .timestamp(LocalDateTime.now())
+//                        .error("Not found")
+//                        .status(HttpStatus.NOT_FOUND.value())
+//                        .details(ex.getMessage())
+//                        .build(), HttpStatus.NOT_FOUND);
 //    }
 //
 //    @ExceptionHandler(AlreadyExistsException.class)
-//    public ResponseEntity<Object> handleInvalidTransactionException(AlreadyExistsException ex) {
-//        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+//    public ResponseEntity<AlreadyExistsExceptionDetails> handleEmailAlreadyExistException(AlreadyExistsException ex) {
+//        return new ResponseEntity<>(
+//                AlreadyExistsExceptionDetails.builder()
+//                        .timestamp(LocalDateTime.now())
+//                        .error("Conflict")
+//                        .status(HttpStatus.CONFLICT.value())
+//                        .details(ex.getMessage())
+//                        .build(), HttpStatus.CONFLICT);
 //    }
-//
 //
 //    @ExceptionHandler(UnauthorizedException.class)
-//    public ResponseEntity<Object> handleConstraintViolation(UnauthorizedException ex) {
-//        return buildResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
+//    public ResponseEntity<UnauthorizedExceptionDetails> handleUnauthorized(UnauthorizedException ex) {
+//        return new ResponseEntity<>(
+//                UnauthorizedExceptionDetails.builder()
+//                        .timestamp(LocalDateTime.now())
+//                        .error("Conflict")
+//                        .status(HttpStatus.UNAUTHORIZED.value())
+//                        .details(ex.getMessage())
+//                        .build(), HttpStatus.UNAUTHORIZED);
 //    }
-//
 //    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<Object> handleGenericException(Exception ex) {
-//        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.");
-//    }
+//    public ResponseEntity<InternalServerErrorExceptionDetails> handleInternalServerErrorException(Exception ex) {
+//        InternalServerErrorExceptionDetails errorDetails = InternalServerErrorExceptionDetails.builder()
+//                .timestamp(LocalDateTime.now())
+//                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+//                .error("Internal Server Error")
+//                .details("An unexpected error occurred. Please try again later.")
+//                .build();
 //
-//    private ResponseEntity<Object> buildResponse(HttpStatus status, String message) {
-//        Map<String, Object> body = new HashMap<>();
-//        body.put("timestamp",LocalDateTime.now());
-//        body.put("status", status.value());
-//        body.put("error", status.getReasonPhrase());
-//        body.put("message", message);
-//        return new ResponseEntity<>(body, status);
-//    }
-//
-//    private Map<String, Object> buildValidationResponse(String message, Map<String, String> errors) {
-//        Map<String, Object> body = new HashMap<>();
-//        body.put("timestamp", LocalDateTime.now());
-//        body.put("status", HttpStatus.BAD_REQUEST.value());
-//        body.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
-//        body.put("message", message);
-//        body.put("validationErrors", errors);
-//        return body;
+//        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
 //    }
 //}
