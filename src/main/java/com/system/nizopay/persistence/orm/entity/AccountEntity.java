@@ -1,23 +1,18 @@
 package com.system.nizopay.persistence.orm.entity;
-
-import com.system.nizopay.core.model.Account;
 import com.system.nizopay.core.model.AccountStatus;
-import com.system.nizopay.core.model.Card;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "tb_accounts")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
 public class AccountEntity{
     @Id
     @Column(name = "account_id")
@@ -34,15 +29,14 @@ public class AccountEntity{
     private BigDecimal creditLimit;
     @Column(name = "account_status")
     private AccountStatus accountStatus;
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @Transient
     private List<TransactionEntity> transactions;
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @Transient
     private List<CardEntity> cards;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    @Column(nullable = true, name = "deleted_at")
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
-
 }

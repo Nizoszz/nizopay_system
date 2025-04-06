@@ -3,8 +3,6 @@ package com.system.nizopay.core.model;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter

@@ -3,7 +3,10 @@ package com.system.nizopay.core.service;
 import com.system.nizopay.core.model.*;
 import com.system.nizopay.core.repository.AccountRepository;
 import com.system.nizopay.core.repository.TransactionRepository;
-import com.system.nizopay.http.rest.dto.TransactionDto;
+import com.system.nizopay.http.rest.dto.DepositDto;
+import com.system.nizopay.http.rest.dto.PaymentDto;
+import com.system.nizopay.http.rest.dto.TransferDto;
+import com.system.nizopay.http.rest.dto.WithdrawDto;
 import com.system.nizopay.persistence.orm.entity.TransactionEntity;
 import com.system.nizopay.persistence.orm.mapper.AccountMapper;
 import com.system.nizopay.persistence.orm.mapper.TransactionMapper;
@@ -13,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.math.BigDecimal;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,9 +34,9 @@ public class TransactionServiceTests{
 
     @BeforeEach
     void setUp() {
-        accountUser1 = AccountFactory.createAccountWithBalancePositive("123456","user1");
-        accountUser2 = AccountFactory.createAccountWithBalancePositive("654321","user2");
-        var transaction = Transaction.create(accountUser1.getAccountId(),accountUser2.getAccountId(),300.00,TransactionType.TRANSFER, null);
+        accountUser1 = AccountFactory.createAccountWithBalancePositive("user1");
+        accountUser2 = AccountFactory.createAccountWithBalancePositive("user2");
+        var transaction = Transaction.create(accountUser1.getAccountId(),accountUser2.getAccountId(),BigDecimal.valueOf(300.00),TransactionType.TRANSFER, null);
         BDDMockito.when(accountRepository.findById(accountUser1.getAccountId()))
                 .thenReturn(Optional.of(AccountMapper.toEntity(accountUser1)));
         BDDMockito.when(accountRepository.findById(accountUser2.getAccountId()))
@@ -41,50 +46,50 @@ public class TransactionServiceTests{
     }
     @Test
     void shouldTransferTransactionSuccessfully() {
-        var transactionDto = new TransactionDto(accountUser1.getAccountId(), accountUser2.getAccountId(), 300.00, null);
+        var transactionDto = new TransferDto(accountUser2.getAccountId(),BigDecimal.valueOf(300.00),null);
         ArgumentCaptor<TransactionEntity> captor = ArgumentCaptor.forClass(TransactionEntity.class);
-        transactionService.makeTransfer(transactionDto);
+        transactionService.makeTransfer(accountUser1.getAccountId(),transactionDto);
         Mockito.verify(transactionRepository).save(captor.capture());
         TransactionEntity savedTransaction = captor.getValue();
         assertEquals(accountUser1.getAccountId(), savedTransaction.getPayerId());
         assertEquals(accountUser2.getAccountId(), savedTransaction.getPayeeId());
-        assertEquals(300.00, savedTransaction.getAmount());
+        assertEquals(BigDecimal.valueOf(300.00), savedTransaction.getAmount());
         assertEquals(TransactionStatus.SUCCESSFUL, savedTransaction.getTransactionStatus());
         assertEquals(TransactionType.TRANSFER, savedTransaction.getTransactionType());
     }
     @Test
     void shouldDepositTransactionSuccessfully() {
-        var transactionDto = new TransactionDto(null, accountUser2.getAccountId(), 300.00, null);
+        var transactionDto = new DepositDto(BigDecimal.valueOf(300.00),null);
         ArgumentCaptor<TransactionEntity> captor = ArgumentCaptor.forClass(TransactionEntity.class);
-        transactionService.makeDeposit(transactionDto);
+        transactionService.makeDeposit(accountUser2.getAccountId(),transactionDto);
         Mockito.verify(transactionRepository).save(captor.capture());
         TransactionEntity savedTransaction = captor.getValue();
         assertEquals(accountUser2.getAccountId(), savedTransaction.getPayeeId());
-        assertEquals(300.00, savedTransaction.getAmount());
+        assertEquals(BigDecimal.valueOf(300.00), savedTransaction.getAmount());
         assertEquals(TransactionStatus.SUCCESSFUL, savedTransaction.getTransactionStatus());
         assertEquals(TransactionType.DEPOSIT, savedTransaction.getTransactionType());
     }
     @Test
     void shouldWithdrawTransactionSuccessfully() {
-        var transactionDto = new TransactionDto(accountUser1.getAccountId(), null, 300.00, null);
+        var transactionDto = new WithdrawDto(BigDecimal.valueOf(300.00),null);
         ArgumentCaptor<TransactionEntity> captor = ArgumentCaptor.forClass(TransactionEntity.class);
-        transactionService.makeWithdraw(transactionDto);
+        transactionService.makeWithdraw(accountUser1.getAccountId(),transactionDto);
         Mockito.verify(transactionRepository).save(captor.capture());
         TransactionEntity savedTransaction = captor.getValue();
         assertEquals(accountUser1.getAccountId(), savedTransaction.getPayerId());
-        assertEquals(300.00, savedTransaction.getAmount());
+        assertEquals(BigDecimal.valueOf(300.00), savedTransaction.getAmount());
         assertEquals(TransactionStatus.SUCCESSFUL, savedTransaction.getTransactionStatus());
         assertEquals(TransactionType.WITHDRAW, savedTransaction.getTransactionType());
     }
     @Test
     void shouldPaymentTransactionSuccessfully() {
-        var transactionDto = new TransactionDto(accountUser1.getAccountId(), null, 300.00, null);
+        var transactionDto = new PaymentDto(BigDecimal.valueOf(300.00),null);
         ArgumentCaptor<TransactionEntity> captor = ArgumentCaptor.forClass(TransactionEntity.class);
-        transactionService.makePayment(transactionDto);
+        transactionService.makePayment(accountUser1.getAccountId(), transactionDto);
         Mockito.verify(transactionRepository).save(captor.capture());
         TransactionEntity savedTransaction = captor.getValue();
         assertEquals(accountUser1.getAccountId(), savedTransaction.getPayerId());
-        assertEquals(300.00, savedTransaction.getAmount());
+        assertEquals(BigDecimal.valueOf(300.00), savedTransaction.getAmount());
         assertEquals(TransactionStatus.SUCCESSFUL, savedTransaction.getTransactionStatus());
         assertEquals(TransactionType.PAYMENT, savedTransaction.getTransactionType());
     }

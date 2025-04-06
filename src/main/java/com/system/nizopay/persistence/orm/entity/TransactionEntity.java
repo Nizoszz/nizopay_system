@@ -1,19 +1,20 @@
 package com.system.nizopay.persistence.orm.entity;
-
 import com.system.nizopay.core.model.TransactionStatus;
 import com.system.nizopay.core.model.TransactionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tb_transactions")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
 public class TransactionEntity{
     @Id
     @Column(name = "transaction_id")
@@ -23,7 +24,7 @@ public class TransactionEntity{
     @Column(name = "payee_id", nullable = true)
     private String payeeId;
     @Column(name = "amount")
-    private Double amount;
+    private BigDecimal amount;
     @Column(name = "transaction_status")
     @Enumerated(EnumType.STRING)
     private TransactionStatus transactionStatus;

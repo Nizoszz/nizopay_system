@@ -1,8 +1,7 @@
 package com.system.nizopay.core.model;
-
 import com.system.nizopay.core.exception.ConflictException;
 import lombok.Getter;
-
+import java.util.Random;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -54,17 +53,17 @@ public class Account{
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
     }
-
-    public static Account create(String accountNumber,String agency,String userId){
+    public static Account create(String userId){
+        Random random = new Random();
         LocalDateTime createdAt = LocalDateTime.now();
         LocalDateTime updatedAt = LocalDateTime.now();
-        return new Account(UUID.randomUUID().toString(),accountNumber,agency,userId,true,createdAt,updatedAt);
+        String accountNumber = String.format("%08d", random.nextInt(10000000, 99999999));
+        return new Account(UUID.randomUUID().toString(),accountNumber,"0001",userId,true,createdAt,updatedAt);
     }
     public static Account restore(String accountId,String accountNumber,String agency,String userId,boolean active,BigDecimal balance,BigDecimal creditLimit,AccountStatus accountStatus,List<Transaction> transactions,List<Card> cards,LocalDateTime createdAt,LocalDateTime updatedAt,LocalDateTime deletedAt){
         return new Account(accountId,accountNumber,agency,userId,active,balance,creditLimit,accountStatus,cards,
                            transactions,createdAt,updatedAt,deletedAt);
     }
-
     public void addCreditCard(CreditCard card) {
         if(!this.accountStatus.equals(AccountStatus.APPROVED)){
             throw new ConflictException("Credit must be approved before adding a new card.");
@@ -79,7 +78,6 @@ public class Account{
         this.cards.add(card);
         this.updatedAt = LocalDateTime.now();
     }
-
     public void removeCard(Card card) {
         if (!this.cards.contains(card)) {
             throw new ConflictException("Card is not associated with this account.");
@@ -88,14 +86,12 @@ public class Account{
         this.cards.remove(card);
         this.updatedAt = LocalDateTime.now();
     }
-
     public void requestCredit(){
         if (this.accountStatus != AccountStatus.NOT_REQUESTED) {
             throw new ConflictException("Credit can only be approved when in PENDING status.");
         }
         this.accountStatus = AccountStatus.PENDING;
     }
-
     public void approveCredit(BigDecimal newLimit){
         if (this.accountStatus != AccountStatus.PENDING) {
             throw new ConflictException("Credit can only be approved when in PENDING status.");
@@ -108,7 +104,6 @@ public class Account{
         this.accountStatus = AccountStatus.APPROVED;
         this.updatedAt = LocalDateTime.now();
     }
-
     public void rejectCredit(){
         if (this.accountStatus != AccountStatus.PENDING) {
             throw new ConflictException("Credit can only be rejected when in PENDING status.");
@@ -116,7 +111,6 @@ public class Account{
         this.accountStatus = AccountStatus.REJECTED;
         this.updatedAt = LocalDateTime.now();
     }
-
     public void withdraw(BigDecimal amount){
         if(amount.compareTo(BigDecimal.ZERO) < 0){
             throw new ConflictException("Amount must be a positive value.");

@@ -1,16 +1,17 @@
 package com.system.nizopay.persistence.orm.mapper;
 
 import com.system.nizopay.core.model.Account;
-import com.system.nizopay.core.model.Card;
+import com.system.nizopay.core.model.Transaction;
 import com.system.nizopay.persistence.orm.entity.AccountEntity;
-import com.system.nizopay.persistence.orm.entity.CardEntity;
 import com.system.nizopay.persistence.orm.entity.TransactionEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AccountMapper{
+public class AccountMapper {
+
     public static AccountEntity toEntity(Account account) {
         return new AccountEntity(
                 account.getAccountId(),
@@ -22,17 +23,24 @@ public class AccountMapper{
                 account.getCreditLimit(),
                 account.getAccountStatus(),
                 account.getTransactions() != null
-                        ? account.getTransactions().stream().map(TransactionMapper::toEntity).collect(Collectors.toList())
+                        ? account.getTransactions().stream()
+                        .map(TransactionMapper::toEntity)
+                        .collect(Collectors.toList())
                         : List.of(),
                 account.getCards() != null
-                        ? account.getCards().stream().map(CardMapper::toEntity).collect(Collectors.toList())
+                        ? account.getCards().stream()
+                        .map(CardMapper::toEntity)
+                        .collect(Collectors.toList())
                         : List.of(),
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 null
         );
+
     }
+
     public static Account toModel(AccountEntity accountEntity) {
+
         return Account.restore(
                 accountEntity.getAccountId(),
                 accountEntity.getAccountNumber(),

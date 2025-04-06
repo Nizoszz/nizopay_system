@@ -1,17 +1,19 @@
 package com.system.nizopay.persistence.orm.entity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Entity
 @Data
 @Table(name = "tb_users")
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserEntity{
     @Id
     @Column(name = "user_id")

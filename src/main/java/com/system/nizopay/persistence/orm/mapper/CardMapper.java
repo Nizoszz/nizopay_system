@@ -1,6 +1,7 @@
 package com.system.nizopay.persistence.orm.mapper;
 
 import com.system.nizopay.core.model.Card;
+import com.system.nizopay.persistence.orm.entity.AccountEntity;
 import com.system.nizopay.persistence.orm.entity.CardEntity;
 
 public class CardMapper{

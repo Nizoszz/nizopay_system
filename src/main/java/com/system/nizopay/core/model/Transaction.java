@@ -2,8 +2,8 @@ package com.system.nizopay.core.model;
 
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -11,14 +11,14 @@ public class Transaction{
     private String transactionId;
     private String payerId;
     private String payeeId;
-    private double amount;
+    private BigDecimal amount;
     private TransactionStatus transactionStatus;
     private TransactionType transactionType;
     private String description;
     private LocalDateTime createdAt;
 
 
-    public Transaction(String transactionId,String payerId,String payeeId,double amount,TransactionStatus transactionStatus,TransactionType transactionType,String description,LocalDateTime createdAt){
+    public Transaction(String transactionId,String payerId,String payeeId,BigDecimal amount,TransactionStatus transactionStatus,TransactionType transactionType,String description,LocalDateTime createdAt){
         this.transactionId = transactionId;
         this.payerId = payerId;
         this.payeeId = payeeId;
@@ -29,7 +29,7 @@ public class Transaction{
         this.createdAt = createdAt;
     }
 
-    public static Transaction create(String payerId,String payeeId,double amount,TransactionType transactionType,String description){
+    public static Transaction create(String payerId,String payeeId,BigDecimal amount,TransactionType transactionType,String description){
         LocalDateTime createdAt = LocalDateTime.now();
         String id = UUID.randomUUID().toString();
         return new Transaction(id, payerId, payeeId,amount,TransactionStatus.PENDING,transactionType,description != null ?description: "",createdAt);
